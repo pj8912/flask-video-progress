@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Processing Progress</title>
+    <style>
+        #progress-bar {
+            width: 600px;
+            border: 1px solid black;
+            height: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #progress {
+            height: 100%;
+            background-color: green;
+            transition: width 0.1s;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+</head>
+<body>
+    <h1>Video Processing Progress</h1>
+    <div id="progress-bar">
+        <div id="progress"></div>
+    </div>
+    <script>
+        const socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+
+        socket.on('progress', function(data) {
+            console.log(data.progress_percentage);
+            updateProgressBar(data.progress_percentage);
+        });
+
+        socket.on('processing_complete', function() {
+            console.log('Processing completed');
+            updateProgressBar(100);
+        });
+
+        function updateProgressBar(percentage) {
+            const progressBar = document.getElementById('progress');
+            progressBar.style.width = percentage + '%';
+        }
+    </script>
+</body>
+</html>
+
